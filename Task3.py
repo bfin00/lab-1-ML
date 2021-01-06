@@ -6,17 +6,14 @@ def random_strings(n): #генерация n случайных строк
     strings = set()
     while len(strings) < n:
         strings.add(''.join(random.choice(string.digits + string.ascii_letters) for i in range(random.randint(1, 20))))
-    return list(strings)
+    return strings
     
 s = random_strings(20000)
-a = []
+a = list()
 for i in range(100):
-    a.append(random.sample(s, random.randint(1000, 15000)))
+    el = random.sample(s, random.randint(1000, 15000))
+    a.append(el)
 
-def jaccard(a, b):
-    a_ = set(a)
-    b_ = set(b)
-    return len(a_.intersection(b_)) / len(a_.union(b_))
 _memomask = {}
 
 def hash_function(n): #генерация случайной хэш-функции
@@ -28,22 +25,18 @@ def hash_function(n): #генерация случайной хэш-функци
     return hash(x) ^ mask
   return myhash
 
-def similar_elements(a, b): 
-    sim_el = 0
-    for i in range(len(a)):
-        for j in range(len(b)):
-            if a[i] == b[j]:
-                sim_el = sim_el + 1
-                break
-    return sim_el
+def jaccard(a, b):
+    a_ = set(a)
+    b_ = set(b)
+    return len(a_.intersection(b_)) / len(a_.union(b_))
 
-def unique_elements(a, b):
-    d = dict()
+def similarity(a, b):
+    count =  0
     for i in range(len(a)):
-        d[a[i]] = i
-    for i in range(len(b)):
-        d[b[i]] = i
-    return len(d)
+        if a[i] == b[i]:
+            count = count + 1
+    return count / len(a)
+
 
 def min_hash(a, b, k):
     A = []
@@ -53,14 +46,14 @@ def min_hash(a, b, k):
         temp_hf  = hash_function(i)
         h_func.append(hash_function(i))
         temp_a, temp_b = [], []
-        for a_idx in range(len(a)):
-            temp_a.append(temp_hf(a[a_idx]))
+        for x in a:
+            temp_a.append(temp_hf(x))
         A.append(min(temp_a))
-        for b_idx in range(len(b)):
-            temp_b.append(temp_hf(b[b_idx])) 
+        for x in b:
+            temp_b.append(temp_hf(x)) 
         B.append(min(temp_b))
-    return similar_elements(A, B)/unique_elements(A, B)
-
+    res = similarity(A, B)
+    return res
 
 for i in range(len(a)):
     for j in range(i+1, len(a)):
